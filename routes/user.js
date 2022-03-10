@@ -6,6 +6,8 @@ const express = require('express');
 // Appel du router avec la méthode mise à disposition par Express
 const router = express.Router();
 
+//limite le nombre d'essaie possible
+const max = require("../middleware/limit")
 
 //* *****Ajout des middlewares***** *//
 // On importe le middleware verifyPassword
@@ -24,7 +26,7 @@ const userCtrl = require('../controllers/user');
 // Chiffre le mot de passe de l'utilisateur, ajoute l'utilisateur à la base de données
 router.post('/signup', verifyPassword, verifyEmail, bruteForceCreate, userCtrl.signup);
 // Vérifie les informations d'identification de l'utilisateur, en renvoyant l'identifiant userID depuis la base de données et un TokenWeb JSON signé(contenant également l'identifiant userID)
-router.post('/login', verifyEmail, bruteForce, userCtrl.login);
+router.post('/login', verifyEmail,max.limiter, bruteForce, userCtrl.login);
 
 // Nous exportons ensuite le router
 module.exports = router;
